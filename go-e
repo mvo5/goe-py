@@ -1,0 +1,47 @@
+#!/usr/bin/python3
+
+import argparse
+import sys
+
+import goeapi
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="go-e cli")
+    parser.add_argument("address", type=str, help="The address of the go-e unit")
+    parser.add_argument("--set-name", help="set friendly name")
+    parser.add_argument("--set-ampere", type=int, help="set ampere")
+    parser.add_argument("--set-phases", type=int, help="set phases (1 or 3)")
+    parser.add_argument("--force-pause", type=str, help="force charge pause")
+    args = parser.parse_args()
+
+    api = goeapi.GoeAPI(args.address)
+    something_was_set = False
+    if args.set_name:
+        something_was_set = True
+        print("old name: ", api.name)
+        api.name = args.set_name
+        print("new name: ", api.name)
+    if args.set_ampere:
+        something_was_set = True
+        print("old ampere: {}".format(api.ampere))
+        api.ampere = args.set_ampere
+        print("new ampere: {}".format(api.ampere))
+    if args.set_phases:
+        something_was_set = True
+        print("old phases: {}".format(api.phases))
+        api.phases = args.set_phases
+        print("new phases: {}".format(api.phases))
+    if args.force_pause:
+        something_was_set = True
+        print("old force_pause: ", api.force_pause)
+        api.force_pause = args.force_pause in ["true", "1", "on", "yes"]
+        print("new force_pause: ", api.force_pause)
+
+    if not something_was_set:
+        print("name:", api.name)
+        print("car connected:", api.car_connected)
+        print("serial: ", api.serial)
+        print("confiugred phases: ", api.phases)
+        print("confiugred ampere: ", api.ampere)
+        print("power: ", api.power / 1000.0)
